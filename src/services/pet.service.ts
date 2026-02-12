@@ -1,22 +1,34 @@
 import { Pet } from '../models/Pet';
-import { UserRole } from '../types/auth'; // Asegúrate de tener definidos ADMIN, VETERINARIO, DUENIO
 
 export const getAllPets = async (userId: string, role: string) => {
-  const populateOptions = [
-    { path: 'duenioId', select: 'username email' },
-    { path: 'veterinarioId', select: 'username email' }
-  ];
+    const populateFields = 'duenioId veterinarioId';
+    if (role === 'admin') return await Pet.find().populate(populateFields);
+    if (role === 'veterinario') return await Pet.find({ veterinarioId: userId }).populate(populateFields);
+    // El dueño solo ve las mascotas asociadas a su duenioId
+    return await Pet.find({ duenioId: userId }).populate(populateFields);
+};
 
-  // 1. ADMIN: Ve absolutamente todas las mascotas
-  if (role === 'admin') {
-    return await Pet.find().populate(populateOptions);
-  }
+export const createPet = async (data: any) => {
+    return await Pet.create(data);
+};
 
-  // 2. VETERINARIO: Ve solo las mascotas que él mismo dio de alta
-  if (role === 'veterinario') {
-    return await Pet.find({ veterinarioId: userId }).populate(populateOptions);
-  }
+export const updatePet = async (id: string, data: any, userId: string, role: string) => {
+    const pet = await Pet.findById(id);
+    if (!pet) throw new Error('Mascota no encontrada');
+    
+    // El veterinario solo modifica lo que él creó; el admin todo
+    if (role !== 'admin' && pet.veterinarioId.toString() !== userId) {
+        throw new Error('No tienes permiso para modificar esta mascota');
+    }
+    return await Pet.findByIdAndUpdate(id, data, { new: true });
+};
 
-  // 3. DUEÑO: Ve solo las mascotas que le pertenecen
-  return await Pet.find({ duenioId: userId }).populate(populateOptions);
+export const deletePet = async (id: string, userId: string, role: string) => {
+    const pet = await Pet.findById(id);
+    if (!pet) throw new Error('Mascota no encontrada');
+    
+    if (role !== 'admin' && pet.veterinarioId.toString() !== userId) {
+        throw new Error('No tienes permiso para eliminar esta mascota');
+    }
+    return await Pet.findByIdAndDelete(id);
 };

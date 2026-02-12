@@ -1,20 +1,14 @@
 import { Router } from 'express';
-import * as petController from '../controllers/pet.controller';
-import { authenticate, authorize } from '../middlewares/auth.middleware';
-import { UserRole } from '../types/auth';
+import { getPets, createPet, updatePet, deletePet } from '../controllers/pet.controller';
+import { authMiddleware } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-// VER (Todos logueados)
-router.get('/', authenticate, petController.getPets);
+router.use(authMiddleware); // Todas las rutas requieren token
 
-// CREAR (Admin y Vet)
-router.post('/', authenticate, authorize([UserRole.ADMIN, UserRole.VETERINARIO]), petController.createPet);
-
-// MODIFICAR (Admin y Vet)
-router.patch('/:id', authenticate, authorize([UserRole.ADMIN, UserRole.VETERINARIO]), petController.updatePet);
-
-// ELIMINAR (Admin y Vet)
-router.delete('/:id', authenticate, authorize([UserRole.ADMIN, UserRole.VETERINARIO]), petController.deletePet);
+router.get('/', getPets);
+router.post('/', createPet);
+router.patch('/:id', updatePet);
+router.delete('/:id', deletePet);
 
 export default router;

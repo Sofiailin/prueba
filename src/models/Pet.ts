@@ -1,11 +1,12 @@
+// src/models/Pet.ts
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IPet extends Document {
   nombre: string;
   especie: string;
   edad: number;
-  duenioId: mongoose.Types.ObjectId; // Referencia al dueño
-  veterinarioId: mongoose.Types.ObjectId; // Referencia al veterinario que creó el registro
+  duenioId: mongoose.Types.ObjectId; // ID del dueño asociado
+  veterinarioId: mongoose.Types.ObjectId; // ID del veterinario que la cargó
 }
 
 const petSchema = new Schema<IPet>({
