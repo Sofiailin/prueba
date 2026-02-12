@@ -1,5 +1,5 @@
 // src/services/auth.service.ts
-import { User } from '../models/user'; // Importación nombrada y ruta en minúsculas
+import { User } from '../models/User'; // Importación nombrada y ruta en minúsculas
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UserRole } from '../types/auth';
