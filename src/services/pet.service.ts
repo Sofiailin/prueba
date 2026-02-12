@@ -1,36 +1,22 @@
-import { Pet } from '../models/Pet'; // Asegúrate que la mayúscula coincida con tu archivo
-import { UserRole } from '../types/auth';
+import { Pet } from '../models/Pet';
+import { UserRole } from '../types/auth'; // Asegúrate de tener definidos ADMIN, VETERINARIO, DUENIO
 
-// OBTENER MASCOTAS (Lógica de permisos)
-export const getAllPets = async (userId: string, role: UserRole) => {
+export const getAllPets = async (userId: string, role: string) => {
   const populateOptions = [
     { path: 'duenioId', select: 'username email' },
     { path: 'veterinarioId', select: 'username email' }
   ];
 
-  // 1. ADMIN: Ve todo
-  if (role === UserRole.ADMIN) {
+  // 1. ADMIN: Ve absolutamente todas las mascotas
+  if (role === 'admin') {
     return await Pet.find().populate(populateOptions);
   }
 
-  // 2. VETERINARIO: Ve solo las que él cargó (veterinarioId)
-  if (role === UserRole.VETERINARIO) {
+  // 2. VETERINARIO: Ve solo las mascotas que él mismo dio de alta
+  if (role === 'veterinario') {
     return await Pet.find({ veterinarioId: userId }).populate(populateOptions);
   }
 
-  // 3. DUEÑO: Ve solo las suyas (duenioId)
-  // Como arreglamos el modelo, esto ahora sí funcionará
+  // 3. DUEÑO: Ve solo las mascotas que le pertenecen
   return await Pet.find({ duenioId: userId }).populate(populateOptions);
-};
-
-// CREAR MASCOTA
-export const createPet = async (nombre: string, especie: string, edad: number, duenioId: string, veterinarioId: string) => {
-  const newPet = new Pet({
-    nombre,
-    especie,
-    edad,
-    duenioId,      // Ahora coincide con el modelo
-    veterinarioId
-  });
-  return await newPet.save();
 };

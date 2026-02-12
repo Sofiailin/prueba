@@ -6,8 +6,7 @@ import path from 'path';
 import authRoutes from './routes/auth.routes';
 import petRoutes from './routes/pet.routes';
 import historialmRoutes from './routes/historialm.routes';
-// Si tienes una ruta de usuarios separada del auth, impórtala aquí:
-// import userRoutes from './routes/user.routes'; 
+import userRoutes from './routes/user.routes'; // ACTIVADO
 
 // Importación del Middleware de Errores
 import { errorHandler } from './middlewares/error.middleware';
@@ -19,16 +18,16 @@ app.use(cors());
 app.use(express.json());
 
 // Servir archivos estáticos (Frontend)
-// CORRECCIÓN: Tu carpeta se llama 'Public' (con P mayúscula), así que ajusté el nombre aquí.
+// Nota: Se usa 'Public' con mayúscula según la estructura de tu proyecto
 app.use(express.static(path.join(__dirname, '..', 'Public')));
 
 // --- 2. Rutas de la API ---
 app.use('/api/auth', authRoutes);
 app.use('/api/pets', petRoutes);
 app.use('/api/historialm', historialmRoutes);
-// app.use('/api/users', userRoutes); // Descomentar si usas la ruta de usuarios
+app.use('/api/users', userRoutes); // ACTIVADO para que el modal cargue los dueños
 
-// Ruta de prueba para verificar que el backend responde
+// Ruta de prueba
 app.get('/api/saludo', (req, res) => {
   res.json({ mensaje: '¡Backend MVC funcionando perfecto! 🚀' });
 });

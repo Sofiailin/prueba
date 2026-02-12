@@ -51,65 +51,57 @@ function renderDashboard() {
     const role = payload.role;
     const username = payload.username;
 
-    let saludo = role === 'veterinario' ? `¡Hola, Dra. ${username}!` : `¡Hola, ${username}!`;
-    document.getElementById('user-name-display').innerText = username;
-    document.getElementById('welcome-msg').innerHTML = `<span class="role-badge">${role}</span><br>${saludo}`;
-
-    // LÓGICA DE VISIBILIDAD DEL BOTÓN AGREGAR
+    // Saludo personalizado
+    document.getElementById('welcome-msg').innerText = `¡Hola, ${username}!`;
+    
+    // OCULTAR botón "Nueva Mascota" si es dueño
     const btnAdd = document.querySelector('.btn-add');
-    if (btnAdd) {
-        // Solo Admin y Veterinario pueden ver el botón de agregar
-        if (role === 'duenio') {
-            btnAdd.style.display = 'none';
-        } else {
-            btnAdd.style.display = 'block';
-        }
+    if (role === 'duenio') {
+        btnAdd.style.display = 'none';
+    } else {
+        btnAdd.style.display = 'block';
     }
 
-    document.getElementById('btn-login-nav').classList.add('hidden');
-    document.getElementById('user-info').classList.remove('hidden');
-
+    document.getElementById('user-name-display').innerText = username;
     mostrarSeccion('dashboard');
-    loadPets(role);
+    loadPets(role, payload.id); // Pasamos el rol para filtrar botones
 }
 
 async function loadPets(role) {
     try {
-        const res = await fetch(`${API_URL}/pets`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await fetch(`${API_URL}/pets`, { 
+            headers: { 'Authorization': `Bearer ${token}` } 
+        });
         const pets = await res.json();
         const container = document.getElementById('lista-mascotas');
         container.innerHTML = '';
 
-        if (pets.length === 0) {
-            container.innerHTML = '<p>No se encontraron mascotas.</p>';
-            return;
-        }
-
         pets.forEach(p => {
-            // LÓGICA DE BOTONES EDITAR/BORRAR
-            // Solo aparecen si eres Admin o Veterinario
-            const isStaff = (role === 'admin' || role === 'veterinario');
+            // Solo mostrar acciones si NO es dueño
+            const canEdit = (role === 'admin' || role === 'veterinario');
             
-            const actions = isStaff ? `
+            const actions = canEdit ? `
                 <div class="pet-actions">
-                    <button onclick="openModal('${p._id}', '${p.nombre}', '${p.especie}', '${p.edad}', '${p.duenioId?._id || ''}')"><i class="fa-solid fa-pen"></i></button>
-                    <button onclick="deletePet('${p._id}')"><i class="fa-solid fa-trash"></i></button>
-                </div>` : ''; // Si es dueño, esto queda vacío
+                    <button onclick="openModal('${p._id}', '${p.nombre}', '${p.especie}', '${p.edad}', '${p.duenioId?._id}')">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button onclick="deletePet('${p._id}')">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>` : '';
 
-            const ownerName = p.duenioId?.username || 'Sin asignar';
-            
             container.innerHTML += `
                 <div class="pet-card">
                     <div class="pet-info">
                         <h4>${p.nombre}</h4>
                         <p>${p.especie} • ${p.edad} años</p>
-                        <small><i class="fa-solid fa-user"></i> Dueño: ${ownerName}</small>
+                        <small>Dueño: ${p.duenioId?.username || 'N/A'}</small>
                     </div>
                     ${actions}
                 </div>`;
         });
     } catch (e) {
-        console.error(e);
+        console.error("Error al cargar mascotas:", e);
     }
 }
 
