@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { getPets, createPet, updatePet, deletePet } from '../controllers/pet.controller';
-import { authMiddleware } from '../middlewares/auth.middleware';
+import { authenticate } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-router.use(authMiddleware); // Todas las rutas requieren token
+router.use(authenticate); // Todas las rutas requieren token
 
 router.get('/', getPets);
 router.post('/', createPet);

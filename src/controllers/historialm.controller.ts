@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator'; // Requisito obligatorio 
 import { HistorialM } from '../models/HistorialM'; 
-import { Pet } from '../models/pet'; // Asegúrate que coincida con el nombre del archivo real 
+import { Pet } from '../models/Pet'; // Asegúrate que coincida con el nombre del archivo real 
 
 // CREAR REGISTRO (Solo Veterinarios)
 export const createEntry = async (req: Request, res: Response) => {
@@ -47,7 +47,7 @@ export const getHistoryByPet = async (req: Request, res: Response) => {
 
     // 3. Validación de seguridad y roles (Requisito de seguridad) [cite: 174, 183]
     // Un dueño solo puede ver el historial si la mascota le pertenece 
-    if (reqAny.user.role === 'duenio' && pet.duenio.toString() !== reqAny.user.id) {
+    if (reqAny.user.role === 'duenio' && pet.duenioId.toString() !== reqAny.user.id) {
       return res.status(403).json({ error: 'No tenés permiso para ver este historial' });
     }
 
