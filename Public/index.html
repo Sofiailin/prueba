@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patitas Felices | Veterinaria</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <i class="fa-solid fa-paw"></i> Patitas Felices
+            </div>
+            <div class="nav-right-group">
+                <a href="#" class="nav-link" onclick="mostrarSeccion('home')">Inicio</a>
+                <button id="btn-login-nav" class="btn-access" onclick="mostrarSeccion('login')">Acceso</button>
+                <div id="user-info" class="user-badge hidden">
+                    <span id="user-name-display"></span>
+                    <button class="btn-logout-small" onclick="logout()">Salir</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <section id="home-section" class="content-section">
+            <div class="hero-minimal">
+                <div class="hero-content">
+                    <h1>Cuidamos lo que más quieres</h1>
+                    <p>Amor y profesionalismo en cada detalle.</p>
+                </div>
+            </div>
+            <div class="services-block container">
+                <div class="service-card">
+                    <i class="fa-solid fa-syringe"></i>
+                    <h3>Vacunación</h3>
+                    <p>Planes sanitarios completos.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fa-solid fa-bone"></i>
+                    <h3>Nutrición</h3>
+                    <p>Alimentación balanceada.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    <h3>Urgencias</h3>
+                    <p>Estamos con vos siempre.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="login-section" class="content-section hidden">
+            <div class="login-container">
+                <div class="login-box animated-box">
+                    <h2>Ingresá acá</h2>
+                    <div class="form-group"><input type="email" id="email" placeholder="Correo electrónico"></div>
+                    <div class="form-group"><input type="password" id="password" placeholder="Contraseña"></div>
+                    <button class="btn-primary" onclick="login()">Entrar</button>
+                    <p id="error-msg" class="error-text"></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="dashboard-section" class="content-section hidden container">
+            <div class="dashboard-header">
+                <h2 id="welcome-msg"></h2>
+                <p>Panel de gestión interna.</p>
+                <button class="btn-add" onclick="abrirModal()">+ Nueva Mascota</button>
+            </div>
+            <div id="lista-mascotas" class="pets-grid"></div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content container">
+            <div class="footer-left">
+                <h3 class="footer-brand"><i class="fa-solid fa-paw"></i> Patitas Felices</h3>
+                <p>Veterinaria en Buenos Aires.</p>
+            </div>
+            <div class="footer-contact">
+                <p><i class="fa-solid fa-location-dot"></i> Av. Siempre Viva 742, BS.AS.</p>
+            </div>
+        </div>
+        <div class="footer-bottom"><p>© 2026 Patitas Felices - Trabajo Final Backend de Fraga Sofia.</p></div>
+    </footer>
+
+    <div id="modal-mascota" class="modal hidden">
+        <div class="modal-content animated-box">
+            <h3 id="modal-titulo">Nueva Mascota</h3>
+            <input type="text" id="pet-nombre" class="modal-input" placeholder="Nombre">
+            <input type="text" id="pet-especie" class="modal-input" placeholder="Especie">
+            <input type="number" id="pet-edad" class="modal-input" placeholder="Edad">
+            
+            <select id="pet-duenio-id" class="modal-input">
+                <option value="">Cargando dueños...</option>
+            </select>
+
+            <div class="modal-actions">
+                <button onclick="guardarMascota()" class="btn-primary">Guardar</button>
+                <button onclick="cerrarModal()" class="btn-logout-small" style="margin-top:10px;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
