@@ -4,7 +4,7 @@ export interface IPet extends Document {
   nombre: string;
   especie: string;
   edad: number;
-  duenio: mongoose.Types.ObjectId;
+  duenioId: mongoose.Types.ObjectId; // Cambiado de 'duenio' a 'duenioId'
   veterinarioId: mongoose.Types.ObjectId;
 }
 
@@ -12,7 +12,8 @@ const petSchema = new Schema<IPet>({
   nombre: { type: String, required: true },
   especie: { type: String, required: true },
   edad: { type: Number, required: true },
-  duenio: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  // AQUI estaba el error: cambiamos 'duenio' por 'duenioId'
+  duenioId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   veterinarioId: { type: Schema.Types.ObjectId, ref: 'User', required: true }
 }, { timestamps: true });
 
