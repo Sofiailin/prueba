@@ -2,39 +2,26 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { JwtPayload, UserRole } from '../types/auth';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'clavesupersecreta';
+const JWT_SECRET = process.env.JWT_SECRET || 'secret_key_diagnostico';
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ message: 'Acceso denegado: No hay token' });
-  }
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ mensaje: 'No hay token, acceso denegado' });
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
     req.user = decoded;
     next();
   } catch (error) {
-    return res.status(403).json({ message: 'Token inválido o expirado' });
+    res.status(403).json({ mensaje: 'Token inválido' });
   }
 };
 
 export const authorize = (roles: UserRole[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const user = (req as any).user;
-
-    if (!user) {
-      return res.status(401).json({ message: 'Usuario no autenticado' });
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res.status(403).json({ mensaje: 'No tienes permisos para realizar esta acción' });
     }
-
-    if (!roles.includes(user.role)) {
-      return res.status(403).json({
-        message: `Acceso prohibido: Se requiere rol ${roles.join(' o ')}`
-      });
-    }
-
     next();
   };
 };
