@@ -1,5 +1,4 @@
-// src/services/auth.service.ts
-import { User } from '../models/user'; // Importación nombrada y ruta en minúsculas
+import { User } from '../models/User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UserRole } from '../types/auth';
@@ -20,9 +19,8 @@ export const register = async (username: string, email: string, pass: string, ro
 };
 
 export const login = async (email: string, pass: string): Promise<string> => {
-  // Ahora User ya no será undefined
   const user = await User.findOne({ email });
-  
+
   if (!user) {
     throw new Error('Credenciales inválidas');
   }

@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { validationResult } from 'express-validator'; // Requisito obligatorio 
-import { HistorialM } from '../models/HistorialM'; 
-import { Pet } from '../models/pet'; // Asegúrate que coincida con el nombre del archivo real 
+import { validationResult } from 'express-validator'; 
+import { HistorialM } from '../models/HistorialM';
+import { Pet } from '../models/Pet'; 
 
 // CREAR REGISTRO (Solo Veterinarios)
 export const createEntry = async (req: Request, res: Response) => {
   try {
-    // 1. Manejo centralizado de errores de validación [cite: 153, 155]
+    // 1. Manejo centralizado de errores de validación 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -15,7 +15,7 @@ export const createEntry = async (req: Request, res: Response) => {
     const reqAny = req as any;
     const { petId, descripcion, diagnostico, tratamiento } = req.body;
 
-    // 2. Verificación de existencia de la entidad relacionada [cite: 140]
+    // 2. Verificación de existencia de la entidad relacionada 
     const pet = await Pet.findById(petId);
     if (!pet) {
       return res.status(404).json({ error: 'Mascota no encontrada' });
@@ -23,7 +23,7 @@ export const createEntry = async (req: Request, res: Response) => {
 
     const newEntry = new HistorialM({
       mascota: petId,
-      veterinario: reqAny.user.id, // ID obtenido del JWT [cite: 154]
+      veterinario: reqAny.user.id, // ID obtenido del JWT 
       descripcion,
       diagnostico,
       tratamiento
@@ -45,15 +45,15 @@ export const getHistoryByPet = async (req: Request, res: Response) => {
     const pet = await Pet.findById(petId);
     if (!pet) return res.status(404).json({ error: 'Mascota no encontrada' });
 
-    // 3. Validación de seguridad y roles (Requisito de seguridad) [cite: 174, 183]
+    // 3. Validación de seguridad y roles (Requisito de seguridad) 
     // Un dueño solo puede ver el historial si la mascota le pertenece 
-    if (reqAny.user.role === 'duenio' && pet.duenio.toString() !== reqAny.user.id) {
+    if (reqAny.user.role === 'duenio' && pet.duenioId.toString() !== reqAny.user.id) {
       return res.status(403).json({ error: 'No tenés permiso para ver este historial' });
     }
 
-    // 4. Obtención de detalles con población de datos [cite: 190]
+    // 4. Obtención de detalles con población de datos 
     const history = await HistorialM.find({ mascota: petId })
-      .populate('veterinario', 'username email') // Muestra quién atendió a la mascota [cite: 138]
+      .populate('veterinario', 'username email') // Muestra quién atendió a la mascota 
       .sort({ fecha: -1 });
 
     return res.json(history);

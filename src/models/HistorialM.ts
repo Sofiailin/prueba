@@ -17,6 +17,5 @@ const HistorialMSchema = new Schema({
   diagnostico: { type: String },
   tratamiento: { type: String }
 });
-
-// CORRECCIÓN: Usamos 'HistorialMSchema'
-export default mongoose.models.HistorialM || mongoose.model<IHistorialM>('HistorialM', HistorialMSchema);
+export const HistorialM =
+  mongoose.models.HistorialM || mongoose.model<IHistorialM>('HistorialM', HistorialMSchema);

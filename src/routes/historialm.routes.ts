@@ -1,16 +1,15 @@
 import { Router } from 'express';
-import { body } from 'express-validator'; // Importar validador
+import { body } from 'express-validator'; 
 import * as historialmController from '../controllers/historialm.controller';
 import { authenticate, authorize } from '../middlewares/auth.middleware';
 import { UserRole } from '../types/auth';
 
 const router = Router();
 
-// POST: Crear consulta
 router.post(
-  '/', 
-  authenticate, 
-  authorize([UserRole.VETERINARIO, UserRole.ADMIN]), 
+  '/',
+  authenticate,
+  authorize([UserRole.VETERINARIO, UserRole.ADMIN]),
   [
     // Validaciones:
     body('petId').isMongoId().withMessage('ID de mascota inválido'),
@@ -23,8 +22,8 @@ router.post(
 
 // GET: Ver historial
 router.get(
-  '/:petId', 
-  authenticate, 
+  '/:petId',
+  authenticate,
   historialmController.getHistoryByPet
 );
 
